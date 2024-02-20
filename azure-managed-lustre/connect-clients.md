@@ -8,31 +8,41 @@ ms.date: 06/28/2023
 ms.lastreviewed: 03/24/2023
 ms.reviewer: dsundarraj
 
-# Intent: As an IT Pro, XXX.
-# Keyword: 
+# Intent: As an IT Pro, I want to set up Linux clients to connect to Azure Managed Lustre.
+# Keyword: lustre
 
 ---
 
 # Connect clients to an Azure Managed Lustre file system
 
-This article describes how to prepare clients and mount the Azure Managed Lustre file system from a client machine.
+This article describes how to prepare Linux clients and mount the Azure Managed Lustre file system from a client machine.
 
-## Client prerequisites
+## Prerequisites
 
-Client machines running Linux can access Azure Managed Lustre. The basic client requirements are as follows:
+Client machines running Linux can access Azure Managed Lustre. The basic requirements are as follows:
 
-- **Lustre client software** - Clients must have the appropriate Lustre client package installed. Prebuilt client packages have been tested with Azure Managed Lustre. See [Install client software](#install-client-software) for instructions and package download options. Client packages are available for several commonly used Linux OS distributions.
-- **Network access** to the file system - Client machines need network connectivity to the subnet that hosts the Azure Managed Lustre file system. If the clients are in a different virtual network, you might need to use virtual network peering.
-- **Mount** - Clients must be able to use the POSIX `mount` command to connect to the file system.
-- **To achieve advertised performance** -
-  - Clients must reside in the same Availability Zone in which the cluster resides.
-  - Be sure to [enable accelerated networking on all client VMs](/azure/virtual-network/create-vm-accelerated-networking-cli#confirm-that-accelerated-networking-is-enabled). If this option isn't enabled, then [fully enabling accelerated networking requires a stop/deallocate of each VM](/azure/virtual-network/accelerated-networking-overview#enabling-accelerated-networking-on-a-running-vm).
-- **Security type** - When selecting the security type for the VM, choose the Standard Security Type.  Choosing Trusted Launch or Confidential types prevent the Lustre module from being properly installed on the client.
+- An Azure account with an active subscription. [Create an account for free](https://azure.microsoft.com/free/).
+- Create an Azure Managed Lustre deployment. See [Azure Managed Lustre File System documentation](/azure/azure-managed-lustre).
+- **Network Access** - Azure Managed Lustre operates within a private virtual network, your clients must have network connectivity to the Azure Managed Lustre virtual network.
+- **Selection of a compatible Linux Distribution and version** - Lustre is supported on a limited set of distributions and versions.  See [Azure Managed Lustre Client Compatibility](client-compatibility) for details on selecting an appropriate client.
 
 The basic workflow is as follows:
 
 1. [Install the Lustre client software](#install-client-software) on each client.
 1. [Use the `mount` command](#mount-command) to make the Azure Managed Lustre file system available on the client.
+
+## Performance Considerations
+
+In order to obtain the advertised performance you will want to make sure that the network is architected and configured optimally.  
+
+  - Clients must reside in the same Region and Availability Zone in which the cluster resides.
+  - Ensure that [accelerated networking is enabled](/azure/virtual-network/create-vm-accelerated-networking-cli#confirm-that-accelerated-networking-is-enabled) on all client virtual machines If enabling on a deployed virtual machine, then see [Enabling accelerated networking on a running VM](/azure/virtual-network/accelerated-networking-overview#enabling-accelerated-networking-on-a-running-vm).
+
+## Virtual machine security type
+
+The Lustre client employs a Lustre kernel module in order to operate.  Security types other than **Standard** will not load kernel modules that can't be verified, thus preventing the use of the Lustre client.  
+
+The Azure infrastructure that will support kernel module signing for **Trusted Launch** and **Confidential** virtual machines is planned on being available by mid-2024 after which these security types will be supported.
 
 ## Install client software
 
@@ -117,7 +127,7 @@ After your clients are connected to the file system, you can use the Azure Manag
 
 > [!IMPORTANT]
 > When a client is no longer needed, it is essential that the client be unmounted prior to shutting it down. 
-> 
+>
 > [How to unmount Azure Managed Lustre Filesystem using Scheduled Events](https://techcommunity.microsoft.com/t5/azure-high-performance-computing/how-to-unmount-azure-managed-lustre-filesystem-using-azure/ba-p/3917814)
 
 ## Next steps

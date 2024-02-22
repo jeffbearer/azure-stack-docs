@@ -72,19 +72,7 @@ If you have an older Lustre client on your Linux system, follow the instructions
 
 ## Update a Lustre client to the current version
 
-If you're using client machines with an older version of Lustre, make sure you completely uninstall the previous Lustre client's kernel modules in addition to removing the software packages.
-
-Follow this procedure:
-
-1. Unmount the client machine from the Lustre cluster.
-1. Run this command to remove the kernel modules: `sudo lustre_rmmod`. Run the command twice, to make sure that everything is removed.
-1. Reboot the system to make sure that all kernel modules are unloaded.
-1. Uninstall the old Lustre client packages.
-1. If you're also updating your Linux kernel version, install the new kernel now.
-1. Reboot the system. <!-- This step is not strictly necessary, but testing has shown that it can prevent a wide variety of problems, including some problems that are difficult to diagnose. -->
-1. Install the Azure Managed Lustre-compatible client as described in this article.
-
-After performing this procedure, you can mount the client to your Azure Managed Lustre system.
+[Update client software](client-update)
 
 ## Mount command
 
